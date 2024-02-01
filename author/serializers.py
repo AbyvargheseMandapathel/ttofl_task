@@ -1,11 +1,19 @@
 from rest_framework import serializers
+from books.serializers import BookSerializer
 from .models import Author
 from django.contrib.auth import authenticate
 
+# class AuthorSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Author
+#         fields = '__all__'
+
 class AuthorSerializer(serializers.ModelSerializer):
+    books = BookSerializer(many=True, read_only=True)
+
     class Meta:
         model = Author
-        fields = '__all__'
+        fields = ['id','name', 'phone', 'email', 'city', 'profile_image', 'books']
         
 class SignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -21,7 +29,7 @@ class SignUpSerializer(serializers.ModelSerializer):
             name=validated_data['name'],
             phone=validated_data['phone'],
             city=validated_data['city'],
-            profile_image=validated_data.get('profile_image')
+            profile_image=validated_data.get('profile_image', None)
         )
         return user
 
