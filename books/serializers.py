@@ -9,7 +9,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['name', 'pages', 'author', 'genre', 'cover_image']
+        fields = ['id','name', 'pages', 'author', 'genre', 'cover_image']
         
         read_only_fields = ['author'] 
     def validate_author(self, value):

@@ -9,6 +9,8 @@ from .serializers import LoginSerializer, SignUpSerializer
 from books.serializers import BookSerializer
 from rest_framework import generics, permissions
 from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+
 
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
@@ -51,4 +53,10 @@ class EditBookAPIView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Book.objects.filter(author=self.request.user)
+        author_books = self.request.user.books.all()  
+        return author_books
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(queryset, pk=pk)

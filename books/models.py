@@ -10,6 +10,7 @@ class Genre(models.Model):
         return self.name
     
 class Book(models.Model):
+    id = models.AutoField(primary_key=True)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
     name = models.CharField( max_length=200)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='books')
