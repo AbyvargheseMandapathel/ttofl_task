@@ -1,3 +1,8 @@
+import csv
+import io
+import json
+
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -6,8 +11,9 @@ from author.serializers import AuthorSerializer
 from books.models import Genre, Book
 from author.models import Author
 from books.serializers import BookSerializer, GenreSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser,AllowAny,IsAuthenticated
 from django.shortcuts import get_object_or_404
+from rest_framework_csv.renderers import CSVRenderer
 
 
 class GenreAPIView(APIView):
@@ -65,5 +71,23 @@ class BookListAPIView(generics.ListAPIView):
             return Response({'error': 'Author not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    
+class ExportBooksAPIView(APIView):
+    permission_classes = [IsAdminUser]
+    renderer_classes = [CSVRenderer]
+
+    def get(self, request, pk):
+        books = Book.objects.filter(genre__id=pk)
+        serializer = BookSerializer(books, many=True)
+        
+        csv_data = CSVRenderer().render(serializer.data)
+        
+        response = HttpResponse(csv_data, content_type='text/csv')
+        
+        response['Content-Disposition'] = 'attachment; filename="books.csv"'
+        
+        return response
+
 
 
