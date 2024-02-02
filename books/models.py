@@ -14,7 +14,7 @@ class Book(models.Model):
     name = models.CharField( max_length=200)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='books')
     pages = models.PositiveIntegerField()
-    cover_image = models.ImageField(upload_to='books/', null=True, blank=True)
+    cover_image = models.ImageField(upload_to='books_image/', null=True, blank=True)
 
     def __str__(self):
         return self.name

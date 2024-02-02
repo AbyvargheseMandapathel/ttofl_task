@@ -9,4 +9,11 @@ class GenreSerializer(serializers.ModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['name', 'pages', 'author', 'genre', 'cover_image']
+        
+        read_only_fields = ['author'] 
+    def validate_author(self, value):
+        
+        if self.instance is None:
+            return self.context['request'].user
+        return value
